@@ -7,8 +7,10 @@ Using the terminal from the workspace directory.
 
 1. Source the workspace.
    - `source install/setup.bash`
-2. Run a ROS node.
-   - `ros2 pkg executables fsai_sim_training demo`
+2. List the executable nodes within the fsai_sim_training package.
+   - `ros2 pkg executables fsai_sim_training`
+3. Run the demo ROS node.
+   - `ros2 run fsai_sim_training demo`
 
 If everything is successful this will run the *demo* node from the *fsai_sim_training* package and something like the following will appear in the terminal:
 

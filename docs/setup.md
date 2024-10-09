@@ -20,5 +20,7 @@ Using the terminal.
 
 1. Ensure that ROS humble is sourced.
    - `source /opt/ros/humble/setup.bash`
-2. Build workspace.
-   - `colon build`
+2. If you have not done so yet, install ackermann messages for ROS Humble.
+   - `sudo apt install ros-humble-ackermann-msgs`
+3. Build workspace.
+   - `colcon build`
