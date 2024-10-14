@@ -7,8 +7,13 @@ Launch files are the main way that you will interact with ROS.
 For example, a simple launch file that only uses functionality from the `webots_fsai` package.
 
 From the terminal in the workspace directory.
+1. Ensure webots is installed:
+    - `ros2 install webots_ros2_driver`
 
-1. Run the launch file.
+2. Install tf-transformations:
+    - `sudo apt-get install ros-humble-tf-transformations`
+
+3. Run the launch file. This will launch multiple ROS nodes.
     - `ros2 launch webots_fsai demo_simple.py`
 
 If everything is successful the webots simulator should launch and the simulated vehicle should start moving.
