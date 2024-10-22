@@ -87,42 +87,50 @@ As much as possible the simulated vehicle attempts to duplicate the behavior of 
 
 Using the terminal.
 
-{{1}} Create the folders.
+{{1}}
+> Create the folders.
+> 
+> - `mkdir -p training_ws/src`
 
-- `mkdir -p training_ws/src`
+{{2}}
+> Move to src/ directory.
+> 
+> - `cd training_ws/src`
 
-{{2}} Move to src/ directory.
+{{3}}
+> Clone the Git repos containing the packages.
+> 
+> - `git clone git@github.com:Warwick-Racing/fsai_common.git`
+> - `git clone git@github.com:Warwick-Racing/fsai_messages.git`
+> - `git clone git@github.com:Warwick-Racing/fsai_sim_training.git`
+> - `git clone git@github.com:Warwick-Racing/ros2_differential_drive.git`
+> - `git clone git@github.com:Warwick-Racing/webots_fsai.git` 
 
-- `cd training_ws/src`
-
-{{3}} Clone the Git repos containing the packages.
-
-- `git clone git@github.com:Warwick-Racing/fsai_common.git`
-- `git clone git@github.com:Warwick-Racing/fsai_messages.git`
-- `git clone git@github.com:Warwick-Racing/fsai_sim_training.git`
-- `git clone git@github.com:Warwick-Racing/ros2_differential_drive.git`
-- `git clone git@github.com:Warwick-Racing/webots_fsai.git` 
-  
-{{4}} Return to root dir of workspace.
-
-- `cd ..`
+{{4}}
+> Return to root dir of workspace.
+> 
+> - `cd ..`
 
 
 ### Building the workspace
 
-{{1}} Ensure that ROS humble is sourced.
+{{1}} 
+> Ensure that ROS humble is sourced.
+>
+> - `source /opt/ros/humble/setup.bash`
 
-- `source /opt/ros/humble/setup.bash`
 
-{{2}} If you have not done so yet, install other dependencies for ROS Humble.
+{{2}} 
+> If you have not done so yet, install other dependencies for ROS Humble.
+> 
+> - `sudo apt-get install ros-humble-ackermann-msgs`
+> - `sudo apt-get install ros-humble-webots-ros2-driver`
+> - `sudo apt-get install ros-humble-tf-transformations`
 
-- `sudo apt-get install ros-humble-ackermann-msgs`
-- `sudo apt-get install ros-humble-webots-ros2-driver`
-- `sudo apt-get install ros-humble-tf-transformations`
-
-{{3}} Build workspace.
-
-- `colcon build --symlink-install`
+{{3}} 
+> Build workspace.
+> 
+> - `colcon build --symlink-install`
 
 
 ## Running ROS nodes
@@ -132,17 +140,20 @@ You can have multiple different workspaces in various stages of development or u
 
 Using the terminal from the workspace directory.
 
-{{1}} Source the workspace.
+{{1}} 
+> Source the workspace.
+> 
+> - `source install/setup.bash`
 
-- `source install/setup.bash`
+{{2}} 
+> List the executable nodes within the fsai_sim_training package.
+> 
+> - `ros2 pkg executables fsai_sim_training`
 
-{{2}} List the executable nodes within the fsai_sim_training package.
-
-- `ros2 pkg executables fsai_sim_training`
-
-{{3}} Run the demo ROS node.
-
-- `ros2 run fsai_sim_training demo`
+{{3}} 
+> Run the demo ROS node.
+> 
+> - `ros2 run fsai_sim_training demo`
 
 If everything is successful this will run the *demo* node from the *fsai\_sim\_training* package and something like the following will appear in the terminal:
 
@@ -154,7 +165,8 @@ If everything is successful this will run the *demo* node from the *fsai\_sim\_t
 
 ```
 
-{{4}} Press Ctrl+C to kill the node.
+{{4}} 
+> Press Ctrl+C to kill the node.
 
 
 ## Running a minimal simulation
@@ -167,15 +179,17 @@ For example, a simple launch file that only uses functionality from the **webots
 
 From the terminal in the workspace directory.
 
-{{1}} Run the launch file. This will launch multiple ROS nodes.
-
-- `ros2 launch webots_fsai demo_simple.py`
+{{1}} 
+> Run the launch file. This will launch multiple ROS nodes.
+> 
+> - `ros2 launch webots_fsai demo_simple.py`
 
 If everything is successful the webots simulator should launch and the simulated vehicle should start moving.
 
 The vehicle is going to swerve off the track almost instantly but that's all we are telling the vehicle is do it go forwards while steering left. The point is that the vehicle has moved.
 
-{{2}} Press Ctrl+C to stop the simulation.
+{{2}} 
+> Press Ctrl+C to stop the simulation.
 
 ![](docs/images/demo_simple_running.png)
 
@@ -192,7 +206,7 @@ The **demo\_simple.py** launch file consists of 3 parts:
 
 **vehicle\_launch.py**
 
-    - This calls the **webots\_fsai** **start\_vehicle** launch file and emulates vehicle start up process from the real vehicle.
+- This calls the **webots\_fsai** **start\_vehicle** launch file and emulates vehicle start up process from the real vehicle.
 
 --------------------
 
@@ -360,27 +374,32 @@ uint8 AMI_AUTONOMOUS_DEMO     = 7
 
 To see an example of this data use the `ros2 topic` commands.
 
-{{1}} Run the demo launch file as before.
+{{1}} 
+> Run the demo launch file as before.
+> 
+> - `ros2 launch fsai_sim_training demo_simple.py`
 
-- `ros2 launch fsai_sim_training demo_simple.py`
+{{2}} 
+> In a new terminal window.
+> 
+> - Make sure to source the workspace.
+> - `source install/setup.bash`
 
-{{2}} In a new terminal window.
+{{3}} 
+> View a list of all topics.
+> 
+> - `ros2 topic list`
 
-- Make sure to source the workspace.
-- `source install/setup.bash`
+{{4}} 
+> View information about a specific topic.
+> 
+> - I.e. **/status**.
+> - `ros2 topic info /status`
 
-{{3}} View a list of all topics.
-
-- `ros2 topic list`
-
-{{4}} View information about a specific topic.
-
-- I.e. **/status**.
-- `ros2 topic info /status`
-
-{{5}} View the actual data being published on a topic.
-
-- `ros2 topic echo /status`  
+{{5}} 
+> View the actual data being published on a topic.
+> 
+> - `ros2 topic echo /status`  
   
 ![](docs/images/topic_echo.png "Example of the output of the /status topic.")
 
@@ -401,9 +420,10 @@ I.e. current mission, current speed/steering/brakes, wheel ticks etc.
 The mission nodes need this information to complete successfully.
 For example autonomous_demo needs to know when it has traveled the required distance.
 
-In this example 
-
-`ros2 launch fsai_sim_training example_manual.py`
+{{1}}
+> Run the example launch file.
+>
+> - `ros2 launch fsai_sim_training example_manual.py`
 
 !?[](docs/videos/manual_control.mp4)
 
@@ -468,12 +488,15 @@ These are generated straight from the simulation and so are 100% accurate, they 
 >
 > To get this functionality you will need to compile our fork of the package from source. Fortunately this is very easy to do.
 >
-> 1. Clone the fork into the **src** directory of your workspace.
+> {{1}}
+> > Clone the fork into the **src** directory of your workspace.
+> >
+> > - `git clone https://github.com/dscroft/webots_ros2.git src/webots_ros2`.
 > 
->   - `git clone https://github.com/dscroft/webots_ros2.git src/webots_ros2`.
-> 2. Build your workspace as normal.
-> 
->   - `colcon build --symlink-install`.
+> {{2}}
+> > Build your workspace as normal.
+> >
+> > - `colcon build --symlink-install`.
 
 
 ### Example
@@ -506,12 +529,14 @@ This is a huge time saving and means that you can be working in parallel with th
 
 The **follow\_breadcrumbs.py** launch file in the **fsai\_sim\_training** package is an example of how to use 'god-mode' information from the simulator to create a simple path following system.
 
-This launch uses some additional packages. Add the **fsai\_delanauy** package to the **src/** directory of your workspace.
+{{1}}
+> This launch uses some additional packages. Add the **fsai\_delanauy** package to the **src/** directory of your workspace.
+> 
+> - `git clone git@github.com:dscroft/fsai_delaunay.git src/fsai_delaunay`.
+> - `colcon build --symlink-install`.
 
-- `git clone git@github.com:dscroft/fsai_delaunay.git src/fsai_delaunay`.
-- `colcon build --symlink-install`.
-
-Run `ros2 launch fsai_sim_training follow_breadcrumbs.py` to see the vehicle follow a path through the cones.
+{{2}}
+> Run `ros2 launch fsai_sim_training follow_breadcrumbs.py` to see the vehicle follow a path through the cones.
 
 !?[](docs/videos/breadcrumbs.mp4 "Simulated vehicle running using the follow_breadcrumbs.py launch file.")
 
