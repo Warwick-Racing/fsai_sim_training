@@ -1,3 +1,20 @@
+<!--
+author:   David Croft
+
+email:    david.croft@warwick.ac.uk
+
+version:  0.0.1
+
+language: en
+
+narrator: US English Female
+
+comment:  Training materials for new WRAI members.
+
+classroom: false
+icon: docs/images/wr_logo.png
+-->
+
 # fsai\_sim\_training
 
 Visualise the materials [HERE](https://liascript.github.io/course/?https://warwick-racing.github.io/fsai_sim_training/LIA.md).
