@@ -143,7 +143,7 @@ If everything is successful this will run the *demo* node from the *fsai\_sim\_t
 Press Ctrl+C to kill the node.
 
 
-## Launch files
+## Running a minimal simulation
 
 Whilst it is possible to run ROS nodes individually, it quickly becomes unmanageable for anything but the smallest of projects. 
 Instead we run launch files that contain the instructions to run and correctly configure multiple nodes.
@@ -201,12 +201,9 @@ The **start\_vehicle.py** launch file is another example. The webots vehicle emu
 3. Making the vehicle active (toggling the grossfunk).
 
 
-
-
-
 ### ROS graph
 
-So our **demo_simple.py** launch file ends up running multiple seperate nodes that are all working together to make the vehicle move.
+So our **demo_simple.py** launch file ends up running multiple separate nodes that are all working together to make the vehicle move.
 
 The diagram below shows how the nodes are connected to each other.
 
