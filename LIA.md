@@ -16,11 +16,11 @@ A ROS2 package is simple a directory that contains the resources needed to run a
 
 For the examples in this guide we are going to be making use of the following custom packages.
 
-- fsai_common
-- fsai_messages
-- fsai_sim_training
-- ros2_differential_drive
-- webots_fsai
+- **fsai\_common**
+- **fsai\_messages**
+- **fsai\_sim_training**
+- **ros2\_differential_drive**
+- **webots\_fsai**
 
 As well as multiple default packages that we will install to the machine and do not need to worry about copying into this workspace.
 
@@ -132,7 +132,7 @@ Whilst it is possible to run ROS nodes individually, it quickly becomes unmanage
 Instead we run launch files that contain the instructions to run and correctly configure multiple nodes.
 
 Launch files are the main way that you will interact with ROS. 
-For example, a simple launch file that only uses functionality from the `webots_fsai` package.
+For example, a simple launch file that only uses functionality from the **webots\_fsai** package.
 
 From the terminal in the workspace directory.
 
@@ -149,35 +149,35 @@ Press Ctrl+C to stop the simulation.
 ![](docs/images/demo_simple_running.png)
 
 
-### demo_simple.py
+### demo\_simple.py
 
-The `demo_simple.py` launch file consists of 3 parts.
+The **demo\_simple.py** launch file consists of 3 parts.
 
 1. webots_launch
 
-    - This calls the `webots_fsai` `start_simulator` launch file which in turns starts the webots simulator and runs the webots/ROS driver node.
+    - This calls the **webots\_fsai** **start\_simulator** launch file which in turns starts the webots simulator and runs the webots/ROS driver node.
 
 2. vehicle_launch.
 
-    - This calls the `webots_fsai` `start_vehicle` launch file and emulates vehicle start up process from the real vehicle.
+    - This calls the **webots\_fsai** **start\_vehicle** launch file and emulates vehicle start up process from the real vehicle.
 
 3. ctrl
 
     - Publishes a simple control commmand to the vehicle, in this case go forwards while steering left.
 
-### start_simulator.py
+### start\_simulator.py
 
 Launch files can include other launch files so it makes sense to break functionality into separate launch files and to them combine as needed. This is especially useful when certain functionality is going to be reused, e.g. starting the simulator.
 
-The `start_simulator` launch file is a good example of this. It is used in all the other launch files that start the simulator, it:
+The **start\_simulator.py** launch file is a good example of this. It is used in all the other launch files that start the simulator, it:
 
 1. Loads webots.
 2. Runs the driver node that translates between webots and ROS.
 3. Tidies up when the simulation is closed.
 
-### start_vehicle.py
+### start\_vehicle.py
 
-The `start_vehicle` launch file is another example. The webots vehicle emulates the real vehicle start up process so that we can test how the rest of the software stack responds. But most of the time we just want to get the vehicle moving. The `start_vehicle` launch file does just that by automatically:
+The **start\_vehicle.py** launch file is another example. The webots vehicle emulates the real vehicle start up process so that we can test how the rest of the software stack responds. But most of the time we just want to get the vehicle moving. The launch file does just that by automatically:
 
 1. Powering on the vehicle.
 2. Selecting a mission.
@@ -185,18 +185,20 @@ The `start_vehicle` launch file is another example. The webots vehicle emulates 
 
 
 
+
+
 ### ROS graph
 
-So our `demo_simple.py` launch file ends up running multiple seperate nodes that are all working together to make the vehicle move.
+So our **demo_simple.py** launch file ends up running multiple seperate nodes that are all working together to make the vehicle move.
 
 The diagram below shows how the nodes are connected to each other.
 
 - Webots is the simulator we are using.
-- webots_driver is the node that translates between webots and ROS.
+- **webots_driver** is the node that translates between webots and ROS.
   - If we changed the simulation software we would need to change this node.
   - But nothing else would need to change.
-- power, select_mission and toggle_grossfunc send one off commands (ROS service calls) to the vehicle to step through the start up process.
-- ctrl sends a continuous stream of data (ROS topic) with desired speed, steering and braking information.
+- **power**, **select_mission** and **toggle_grossfunc** send one off commands (ROS service calls) to the vehicle to step through the start up process.
+- **ctrl** sends a continuous stream of data (ROS topic) with desired speed, steering and braking information.
   - For safety reasons on the real vehicle, the vehicle automatically stops if it does not receive a control command for a certain amount of time.
   - The simulated vehicle has no safety concerns but works the same way because otherwise it wouldn't be an accurate simulation.
 
@@ -228,14 +230,14 @@ Try running an example that is a bit more complex and closer to what we would be
 One possible architecture is to have a single launch file that runs the nodes for all possible missions. 
 However only one mission is actually active at a given time. 
 In this example, each mission has a seperate node that outputs the control commands for that mission.
-These are all passed to the control_multiplexer node which forwards the commands from the mission that is actually selected at that time.
+These are all passed to the **control_multiplexer** node which forwards the commands from the mission that is actually selected at that time.
 
-The static_a, static_b, autonomous_demo, acceleration and control_multiplexer nodes are all listening (subscribing) to the /status topic.
+The **static_a**, **static_b**, **autonomous_demo**, **acceleration** and **control_multiplexer** nodes are all listening (subscribing) to the /status topic.
 
-The /status topic contains the information that the car generates about its current state. 
+The **/status** topic contains the information that the car generates about its current state. 
 I.e. current mission, current speed/steering/brakes, wheel ticks etc.
 The mission nodes need this information to complete successfully.
-For example autonomous_demo needs to know when it has travelled the required distance.
+For example autonomous_demo needs to know when it has traveled the required distance.
 
 In this example 
 
@@ -245,7 +247,7 @@ In this example
 
 example_manual
 
-``` ascii                             
+``` ascii
                 .-- ROS ---------------------------------------------------------.
                 |   +----------------+                                           |
                 |   |                |                  +----------+             |
@@ -280,8 +282,99 @@ example_manual
 ```
 
 
-
 ## Advanced
+
+What we have seen so far is the most basic usage of the WRAI simulator stack. 
+In this section we will see some more advanced features that can be used to customize the simulation.
+
+### Cheating
+
+One of the biggest advantages of using a simulator is that we can querying the simulator directly for information. 
+
+The standard `webots_driver` node automatically publishes additional information from the sensor whenever you add a sensor to your simulated vehicle.
+
+For example, if you enable recognition and segmentation on your simulated cameras, you will get object detections and image segmentation masks published automatically. 
+These are generated straight from the simulation and so are 100% accurate, they can also be used to easily generate ground truth or training data for machine learning models. 
+
+![](docs/images/sim_view.png "View of the Webots simulation.") ![](docs/images/camera_view.png "View from the simulated camera on the vehicle.") ![](docs/images/segment_view.png "Image segmentation view generated directly by Webots.")
+
+> **WARNING**
+>
+> For the moment the default **ros-humble-webots-ros2-driver** package that can be installed in Ubuntu does not automatically produce the image segmentation masks.
+>
+> We have added that to the code and we have a pull request open to get that functionality added to the default package but it's not been added at time of writing (Oct 2024).
+>
+> To get this functionality you will need to compile our fork of the package from source. Fortunately this is very easy to do.
+>
+> 1. Clone the fork into the **src** directory of your workspace.
+> 
+>   - `git clone https://github.com/dscroft/webots_ros2.git src/webots_ros2`.
+> 2. Build your workspace as normal.
+> 
+>   - `colcon build --symlink-install`.
+
+
+### Example
+
+The **webots\_driver.py** node included in the **webots\_fsai** package has been written to automatically publish further information that will not be so easily acquired in the real world. 
+
+- The position and orientation of the vehicle in the simulated world.
+- The position and colour of all cones in the simulated world.
+
+In real life if we want to know the positions of the cones we need to develop a full perception pipeline to e.g.:
+
+1. Connect to the camera hardware.
+2. Recognise the cones in the image. 
+3. Estimate their distance from the camera.
+4. Convert that pixel and distance information into a 3D position.
+5. Track the position of the vehicle.
+6. Integrate the relative positions of the cones with the vehicle's position over time so that we can remember where cones are even if they've gone out of view. 
+7. Plan a path through the cones.
+8. Generate the control commands to follow that path.
+
+This is basically the entire challenge of the Formula Student competition.
+
+In the simulator we can skip the perception portion (steps 1-6) just ask the simulator where the cones are. 
+This is a huge advantage because if you are working on the path planning/optimisation/following elements (steps 7-8) you can simply ignore the perception problem. 
+This is a huge time saving and means that you can be working in parallel with the perception team rather than having to wait for them to finish.
+
+### follow\_breadcrumbs.py
+
+The **follow\_breadcrumbs.py** launch file in the **fsai\_sim\_training** package is an example of how to use 'god-mode' information from the simulator to create a simple path following system.
+
+Run `ros2 launch fsai_sim_training follow_breadcrumbs.py` to see the vehicle follow a path through the cones.
+
+!?[](docs/videos/breadcrumbs.mp4 "Simulated vehicle running using the follow_breadcrumbs.py launch file.")
+
+
+
+**webots\_driver** is our standard node that translates between the Webots simulator and ROS.
+**power**, **select\_mission** and **toggle\_grossfunc** were covered previously.
+
+Because **webots\_driver** is communicating to a simulated environment rather than reality, it can query the position of the cones in the simulated world.
+This information is published as the **/cones** topic in ROS.
+
+--------------------------
+
+**delaunay** is a node that takes the cone positions and generates a series of "gates".
+
+**Gate** in this context is a blue/yellow pair of cones that are approximately 3.5m apart.
+
+--------------------------
+
+**breadcrumbs** is a node that takes:
+
+- The vehicles position and heading (via the **/tf** topic).
+- The position of the gates (via the **/gates** topic).
+
+It then outputs the steering angle required to drive at the nearest gate in front of the vehicle via the **/steer\_angle** topic.
+
+--------------------------
+
+The **ctrl** node is a simple node that takes the steering angle, combines it with a fixed speed and publishes the standard format control commands to the vehicle.
+
+The node uses the cone and vehicle information being published by the simulator and simply drives at the nearest gate in front of the vehicle.
+
 
 ``` ascii                             
                 .-- ROS -----------------------------------------------.
@@ -298,11 +391,11 @@ example_manual
 |  Webots   *------>|               |              |          |        |       
 | Simulator |<------* webots_driver *-- /cones --->| delaunay |        |
 |           |   |   |               |              |          |        |      
-+-----------+   |   +---------------+              +----*-----+        |
-                |      ^                                |              |
-                |      |                             /centers          |
-                |    \ctrl                              |              |
-                |      |                                V              |
++-----------+   |   +-------------*-+              +-------*--+        |
+                |      ^           \                       |           |
+                |      |            .---- /tf ------.   /centers       |
+                |    /ctrl                          |      |           |
+                |      |                            V      V           |
                 |   +--*---+                      +-------------+      |
                 |   |      |                      |             |      |
                 |   | ctrl |<---- /steer_angle ---* breadcrumbs |      |
