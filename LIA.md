@@ -91,15 +91,20 @@ As much as possible the simulated vehicle attempts to duplicate the behavior of 
 Using the terminal.
 
 1. Create the folders.
+   
     - `mkdir -p training_ws/src`
 2. Move to src/ directory.
+   
    - `cd training_ws/src`
+  
 3. Clone the Git repos containing the packages.
+   
    - `git clone git@github.com:Warwick-Racing/fsai_common.git`
    - `git clone git@github.com:Warwick-Racing/fsai_messages.git`
    - `git clone git@github.com:Warwick-Racing/fsai_sim_training.git`
    - `git clone git@github.com:Warwick-Racing/ros2_differential_drive.git`
    - `git clone git@github.com:Warwick-Racing/webots_fsai.git` 
+  
 4. Return to root dir of workspace.
    - `cd ..`
 
@@ -107,13 +112,16 @@ Using the terminal.
 ### Building the workspace
 
 1. Ensure that ROS humble is sourced.
+   
   - `source /opt/ros/humble/setup.bash`
 2. If you have not done so yet, install other dependencies for ROS Humble.
+   
   - `sudo apt-get install ros-humble-ackermann-msgs`
   - `sudo apt-get install ros-humble-webots-ros2-driver`
   - `sudo apt-get install ros-humble-tf-transformations`
+  
 3. Build workspace.
-  - `colcon build`
+  - `colcon build --symlink-install`
 
 
 ## Running ROS nodes
@@ -124,9 +132,12 @@ You can have multiple different workspaces in various stages of development or u
 Using the terminal from the workspace directory.
 
 1. Source the workspace.
+   
   - `source install/setup.bash`
 2. List the executable nodes within the fsai_sim_training package.
+   
   - `ros2 pkg executables fsai_sim_training`
+  
 3. Run the demo ROS node.
   - `ros2 run fsai_sim_training demo`
 
@@ -203,16 +214,20 @@ The **start\_vehicle.py** launch file is another example. The webots vehicle emu
 
 ### ROS graph
 
-So our **demo_simple.py** launch file ends up running multiple separate nodes that are all working together to make the vehicle move.
+So our **demo\_simple.py** launch file ends up running multiple separate nodes that are all working together to make the vehicle move.
 
 The diagram below shows how the nodes are connected to each other.
 
 - Webots is the simulator we are using.
-- **webots_driver** is the node that translates between webots and ROS.
+- **webots\_driver** is the node that translates between webots and ROS.
+  
   - If we changed the simulation software we would need to change this node.
   - But nothing else would need to change.
-- **power**, **select_mission** and **toggle_grossfunc** send one off commands (ROS service calls) to the vehicle to step through the start up process.
+  
+- **power**, **select\_mission** and **toggle\_grossfunc** send one off commands (ROS service calls) to the vehicle to step through the start up process.
+  
 - **ctrl** sends a continuous stream of data (ROS topic) with desired speed, steering and braking information.
+  
   - For safety reasons on the real vehicle, the vehicle automatically stops if it does not receive a control command for a certain amount of time.
   - The simulated vehicle has no safety concerns but works the same way because otherwise it wouldn't be an accurate simulation.
 
@@ -247,12 +262,12 @@ Lidar data can be passed as standard ROS2 point cloud messages.
 
 However for the control commands going to the vehicle and the status information coming from the vehicle, custom message formats are used because it is the only way to represent all the information that is passed.
 
-The **fsai_messages** package contains the custom message formats that are used by the WRAI team. 
+The **fsai\_messages** package contains the custom message formats that are used by the WRAI team. 
 The formats are in their own package as they are needed by multiple other packages, i.e. both the simulation control node and the real vehicle control node need to know the same message format so that code written to one will work seamlessly with the other.
 
 ### fsai_messages/Control
 
-**fsai_messages/Control** is the message format to send control commands to the vehicle. 
+**fsai\_messages/Control** is the message format to send control commands to the vehicle. 
 It has the following structure.
 
 ``` txt fsai_messages/Control
@@ -269,9 +284,9 @@ uint8 EBRAKE = 2
 uint8 NORMAL_MS = 3
 ```
 
-- **steer_angle** is the desired steering angle in radians.
-- **brake_press_f** and **brake_press_r** are the desired brake pressures for the front and rear axles respectively on a scale of $[0.0 1.0]$.
-- **axle_speed_f** and **axle_speed_r** are the desired speeds for the front and rear axles respectively.
+- **steer\_angle** is the desired steering angle in radians.
+- **brake\_press_f** and **brake\_press\_r** are the desired brake pressures for the front and rear axles respectively on a scale of $[0.0 1.0]$.
+- **axle\_speed_f** and **axle\_speed\_r** are the desired speeds for the front and rear axles respectively.
   
   - Depending on the value of **state** these can be in either rpm or m/s.
 - **state** should be one of the follow.
@@ -282,7 +297,7 @@ uint8 NORMAL_MS = 3
 
 ### fsai_messages/Status
 
-**fsai_messages/Status** is the message format to receive status information from the vehicle.
+**fsai\_messages/Status** is the message format to receive status information from the vehicle.
 
 It has the following format:
 
@@ -359,7 +374,7 @@ Try running an example that is a bit more complex and closer to what we would be
 One possible architecture is to have a single launch file that runs the nodes for all possible missions. 
 However only one mission is actually active at a given time. 
 In this example, each mission has a seperate node that outputs the control commands for that mission.
-These are all passed to the **control_multiplexer** node which forwards the commands from the mission that is actually selected at that time.
+These are all passed to the **control\_multiplexer** node which forwards the commands from the mission that is actually selected at that time.
 
 The **static\_a**, **static\_b**, **autonomous\_demo**, **acceleration** and **control\_multiplexer** nodes are all listening (subscribing) to the /status topic.
 
