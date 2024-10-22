@@ -43,9 +43,6 @@ As well as multiple default packages that we will install to the machine and do 
 
 The folder structure that we are aiming to achieve is shown below, as you can see below each package is a separate folder under the src/ directory.
 
-For an explanation of the purpose of each package see [HERE](docs/packages.md).
-
-
 ``` ascii
 +- training_ws/
 +-+- install/
