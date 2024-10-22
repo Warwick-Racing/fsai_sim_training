@@ -240,6 +240,121 @@ This is the simplest possible setup we can use to get the vehicle moving in the 
                 .------------------------------------------------------.
 ```
 
+## WRAI topic formats
+
+For the most part the WRAI team uses the standard ROS2 message formats.
+These suffice for most of the data that we need to pass between nodes.
+
+For example, image and depth information from the stereo camera (ZEDCAM) can be passed as standard ROS2 image messages.
+Lidar data can be passed as standard ROS2 point cloud messages.
+
+However for the control commands going to the vehicle and the status information coming from the vehicle, custom message formats are used because it is the only way to represent all the information that is passed.
+
+The **fsai_messages** package contains the custom message formats that are used by the WRAI team. 
+The formats are in their own package as they are needed by multiple other packages, i.e. both the simulation control node and the real vehicle control node need to know the same message format so that code written to one will work seamlessly with the other.
+
+### fsai_messages/Control
+
+**fsai_messages/Control** is the message format to send control commands to the vehicle. 
+It has the following structure.
+
+``` txt fsai_messages/Control
+float32 steer_angle
+float32 brake_press_f
+float32 brake_press_r
+float32 axle_speed_f
+float32 axle_speed_r
+uint8 state
+
+uint8 NORMAL = 0
+uint8 FINISHED = 1
+uint8 EBRAKE = 2
+uint8 NORMAL_MS = 3
+```
+
+- **steer_angle** is the desired steering angle in radians.
+- **brake_press_f** and **brake_press_r** are the desired brake pressures for the front and rear axles respectively on a scale of $[0.0 1.0]$.
+- **axle_speed_f** and **axle_speed_r** are the desired speeds for the front and rear axles respectively.
+  
+  - Depending on the value of **state** these can be in either rpm or m/s.
+- **state** should be one of the follow.
+  - **NORMAL**, the vehicle can move and speed information is given in rpm.
+  - **FINISHED**, the vehicle has completed its mission and should stop.
+  - **EBRAKE**, the vehicle should stop immediately due to an issue.
+  - **NORMAL_MS**, the vehicle can move and speed information is given in m/s.
+
+### fsai_messages/Status
+
+**fsai_messages/Status** is the message format to receive status information from the vehicle.
+
+It has the following format:
+
+``` txt fsai_messages/Status
+std_msgs/Header header
+uint8 as_state
+uint8 ami_state
+float32 steering_angle
+float32 f_brake
+float32 r_brake
+float32 fl_rpm
+float32 fr_rpm
+float32 rl_rpm
+float32 rr_rpm
+uint16 fl_tick
+uint16 fr_tick
+uint16 rl_tick
+uint16 rr_tick
+
+uint8 AS_OFF             = 1
+uint8 AS_READY           = 2
+uint8 AS_DRIVING         = 3
+uint8 AS_EMERGENCY_BRAKE = 4
+uint8 AS_FINISHED        = 5
+
+uint8 AMI_NOT_SELECTED        = 0
+uint8 AMI_ACCELERATION        = 1
+uint8 AMI_SKIDPAD             = 2
+uint8 AMI_AUTOCROSS           = 3
+uint8 AMI_TRACK_DRIVE         = 4
+uint8 AMI_STATIC_INSPECTION_A = 5
+uint8 AMI_STATIC_INSPECTION_B = 6
+uint8 AMI_AUTONOMOUS_DEMO     = 7
+```
+
+- **header** is the standard ROS message header and contains information such as timestamp.
+- **as\_state** is the state of the autonomous system.
+  
+  - It will have a value of **AS\_OFF**, **AS\_READY**, **AS\_DRIVING**, **AS\_EMERGENCY\_BRAKE** or **AS\_FINISHED** depending on the current state of the vehicle.
+  - **AS\_DRIVING** means that the vehicle is active and can be driven.
+- **ami\_state** is the current mission.
+  
+  - Possible values should be self explanatory and on the real vehicle will reflect what was selected on the side screen.
+- **steering\_angle** is the current steering angle in radians.
+- **f\_brake** and **r\_brake** are the current brake pressures for the front and rear axles respectively.
+- **fl\_rpm**, **fr\_rpm**, **rl\_rpm** and **rr\_rpm** are the current speeds of the front left, front right, rear left and rear right wheels respectively.
+- **fl\_tick**, **fr\_tick**, **rl\_tick** and **rr\_tick** are the current tick counts for the front left, front right, rear left and rear right wheels respectively.
+
+  - The vehicle produces 20 ticks per wheel revolution.
+
+### Viewing
+
+To see an example of this data use the `ros2 topic` commands.
+
+1. Run the demo launch file as before.
+
+    - `ros2 launch fsai_sim_training demo_simple.py`
+
+2. In a new terminal window.
+
+    - Make sure to source the workspace.
+    - `source install/setup.bash`
+
+3. View the topic data.
+   
+    - `ros2 topic echo /status`  
+  
+![](docs/images/topic_echo.png "Example of the output of the /status topic.")
+
 ## Next steps
 
 Try running an example that is a bit more complex and closer to what we would be running on the real vehicle.
@@ -249,7 +364,7 @@ However only one mission is actually active at a given time.
 In this example, each mission has a seperate node that outputs the control commands for that mission.
 These are all passed to the **control_multiplexer** node which forwards the commands from the mission that is actually selected at that time.
 
-The **static_a**, **static_b**, **autonomous_demo**, **acceleration** and **control_multiplexer** nodes are all listening (subscribing) to the /status topic.
+The **static\_a**, **static\_b**, **autonomous\_demo**, **acceleration** and **control\_multiplexer** nodes are all listening (subscribing) to the /status topic.
 
 The **/status** topic contains the information that the car generates about its current state. 
 I.e. current mission, current speed/steering/brakes, wheel ticks etc.
@@ -337,6 +452,8 @@ The **webots\_driver.py** node included in the **webots\_fsai** package has been
 
 - The position and orientation of the vehicle in the simulated world.
 - The position and colour of all cones in the simulated world.
+
+This data is passed as a XYZRGB pointcloud message on the **/cones** topic.
 
 In real life if we want to know the positions of the cones we need to develop a full perception pipeline to e.g.:
 
