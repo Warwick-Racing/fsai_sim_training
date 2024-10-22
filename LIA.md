@@ -476,11 +476,14 @@ This is a huge time saving and means that you can be working in parallel with th
 
 The **follow\_breadcrumbs.py** launch file in the **fsai\_sim\_training** package is an example of how to use 'god-mode' information from the simulator to create a simple path following system.
 
+This launch uses some additional packages. Add the **fsai\_delanauy** package to the **src/** directory of your workspace.
+
+- `git clone git@github.com:dscroft/fsai_delaunay.git src/fsai_delaunay`.
+- `colcon build --symlink-install`.
+
 Run `ros2 launch fsai_sim_training follow_breadcrumbs.py` to see the vehicle follow a path through the cones.
 
 !?[](docs/videos/breadcrumbs.mp4 "Simulated vehicle running using the follow_breadcrumbs.py launch file.")
-
-
 
 **webots\_driver** is our standard node that translates between the Webots simulator and ROS.
 **power**, **select\_mission** and **toggle\_grossfunc** were covered previously.
@@ -492,7 +495,7 @@ This information is published as the **/cones** topic in ROS.
 
 **delaunay** is a node that takes the cone positions and generates a series of "gates".
 
-**Gate** in this context is a blue/yellow pair of cones that are approximately 3.5m apart.
+'Gate' in this context is a blue/yellow pair of cones that are approximately 3.5m apart.
 
 --------------------------
 
