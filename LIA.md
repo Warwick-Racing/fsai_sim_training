@@ -61,7 +61,7 @@ Listed in alphabetical order, not priority.
 **fsai\_common**
 
 Containing common functionality that the vehicle requires, both simulated and real.
-For example common configuration files, or control code for missions such as STATIC_INSPECTION_A which functions identically in both simulation and reality.
+For example common configuration files, or control code for missions such as STATIC\_INSPECTION\_A which functions identically in both simulation and reality.
 
 **fsai\_messages**
 
@@ -312,6 +312,7 @@ uint8 NORMAL_MS = 3
   
   - Depending on the value of **state** these can be in either rpm or m/s.
 - **state** should be one of the follow.
+
   - **NORMAL**, the vehicle can move and speed information is given in rpm.
   - **FINISHED**, the vehicle has completed its mission and should stop.
   - **EBRAKE**, the vehicle should stop immediately due to an issue.
