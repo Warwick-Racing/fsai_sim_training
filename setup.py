@@ -24,7 +24,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'demo = fsai_sim_training.demo:main'
+            'demo = fsai_sim_training.demo:main',
+            'lidar_demo = fsai_sim_training.lidar_demo:main'
         ],
     },
 )
