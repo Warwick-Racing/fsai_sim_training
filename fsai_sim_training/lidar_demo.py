@@ -14,9 +14,7 @@ class LidarDemo(Node):
                                               self.__cones_callback, 1)
     
     def __cones_callback(self, msg):
-
         self.get_logger().info("Callback triggered")
-        count = 0
 
         validPoints = ( (c,i) for c, i in enumerate(read_points(msg)) if not np.isinf(i[0]) )
         for c, i in itertools.islice(validPoints, 10):

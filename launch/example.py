@@ -8,7 +8,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     webots_dir = get_package_share_directory('webots_fsai')
 
-    world = PathJoinSubstitution([webots_dir, "worlds", "simple_trackdrive.wbt"])
+    world = PathJoinSubstitution([webots_dir, "worlds", "simple_trackdrive_2025.wbt"])
     urdf = PathJoinSubstitution([webots_dir, "resource", "imeche.urdf"])
     use_sim_time = "False"
 

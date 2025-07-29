@@ -16,7 +16,7 @@ def generate_launch_description():
     world = PathJoinSubstitution([webots_dir, "worlds", "simple_trackdrive.wbt"]) #"simple_trackdrive.wbt"
     urdf = PathJoinSubstitution([webots_dir, "resource", "imeche.urdf"])
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
-    mission = "AUTONOMOUS_DEMO"
+    mission = "TRACK_DRIVE"
 
     # Launch webots simulator
     webots_launch = IncludeLaunchDescription(

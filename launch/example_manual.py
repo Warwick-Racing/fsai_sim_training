@@ -16,7 +16,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 def generate_launch_description():
     webots_dir = get_package_share_directory('webots_fsai')
 
-    world = PathJoinSubstitution([webots_dir, "worlds", "simple_trackdrive.wbt"])
+    world = PathJoinSubstitution([webots_dir, "worlds", "simple_acceleration.wbt"])
     urdf = PathJoinSubstitution([webots_dir, "resource", "imeche.urdf"])
     use_sim_time = "False"
 

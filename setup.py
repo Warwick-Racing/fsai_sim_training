@@ -25,7 +25,9 @@ setup(
     entry_points={
         'console_scripts': [
             'demo = fsai_sim_training.demo:main',
-            'lidar_demo = fsai_sim_training.lidar_demo:main'
+            'lidar_demo = fsai_sim_training.lidar_demo:main',
+            'lidar_tf_demo = fsai_sim_training.lidar_tf_demo:main'
+
         ],
     },
 )
