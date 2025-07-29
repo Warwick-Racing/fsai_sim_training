@@ -24,6 +24,122 @@ The aim of this repo is to guide you through setting up an initial ROS2 workspac
 These instructions assume that you have a basic understanding on the Linux terminal.
 
 
+# ROS
+
+The WRAI team uses ROS2 (Robot Operating System 2) for their autonomous vehicle software stack.
+It is possible to contribute to the team without knowing ROS.
+
+**But the reality is that if you want your code on the vehicle at competition time, it must be integrated with the rest of the team's ROS2 software stack.**
+**It does not matter how beautifully written, or well it works on your own computer, if it does not work with the rest of the system is it ultimately useless.**
+
+Using ROS does have a learning curve, but any short term pain is outweighed by the long term benefits of using a well established framework that has been designed to solve the problems of robotics software development.
+
+With that in mind it is worth discussing what ROS is and why it is used.
+
+## Why ROS?
+
+The field of robotics has advanced rapidly in recent years, with reliable and affordable hardware—ranging from ground robots to drones and humanoids—becoming increasingly accessible. Alongside this, the development of sophisticated algorithms has enabled robots to achieve higher levels of autonomy.
+
+Despite these advancements, developing software for robots remains a complex challenge. Robots often require integration of diverse hardware and software components, and managing this complexity can be difficult for developers.
+
+ROS (Robot Operating System) is an open-source meta-operating system designed to address these challenges. It offers essential services such as hardware abstraction, low-level device control, commonly-used functionality, inter-process message passing, and package management. Additionally, ROS provides tools and libraries to help developers obtain, build, write, and run code across multiple computers.
+
+While ROS works alongside traditional operating systems rather than replacing them, its real value lies in how it simplifies and standardizes the development process for robotic software. Adopting ROS does require an initial investment of time and effort, but it can resolve many common issues in robotics software development and ultimately make the process more efficient and manageable.
+
+## Modularity
+
+A common best practice in robotics software development is to break down the system into small, independent components that work together to accomplish the overall objective. This strategy, sometimes referred to as “complexity via composition,” helps manage the inherent complexity of robotics projects.
+This is especially important in the context of the WRAI team where multiple team members are likely to the working on different parts of the software stack at the same time.
+
+Often, these components need to communicate, even if they are running on different machines. ROS simplifies this process by providing straightforward and seamless communication mechanisms between processes.
+
+Another significant advantage of ROS is software reuse. The rapid advancement of robotics research has produced a wealth of robust algorithms for tasks like navigation, motion planning, and mapping. However, these algorithms are only truly valuable if they can be easily reused in new projects without having to be reimplemented each time. ROS addresses this in two key ways:
+
+- It offers a wide range of stable, well-tested packages that implement many essential robotics algorithms.
+- Its standardized message-passing interface has become a common standard for interoperability, making it easier to connect to both new hardware and state-of-the-art algorithms. The ROS ecosystem includes hundreds of publicly available packages, reducing the need to write custom “glue” code to integrate different components.
+
+In the context of the team, this means that once you have learned how to use ROS, you can quickly leverage existing packages and tools to build upon the work of others.
+Or with the hardware that the team uses, the sensor manufacturers generally provide ROS drivers for their hardware, meaning that you can use the sensors without having to write your own drivers.
+
+By leveraging ROS, the team can spend less time reinventing solutions and more time exploring new ideas, once they have overcome the initial learning curve.
+
+
+## Testing
+
+Rapid testing One of the reasons that software development for robots is often more challenging than other kinds of development is that testing can be time consuming and error-prone. 
+Physical robots may not always be available to work with, and when they are, the process is sometimes slow and finicky. 
+Working with ROS provides two effective workarounds to this problem.
+
+Well-designed ROS systems separate the low-level direct control of the hardware and high-level processing and decision making into separate programs. 
+Because of this separation, we can temporarily replace those low-level programs (and their corresponding hardware) with a simulator, to test the behavior of the high-level part of the system.
+
+ROS also provides a simple way to record and play back sensor data and other kinds of messages. This facility means that we can obtain more leverage from the time we do spend operating a physical robot. 
+By recording the robot’s sensor data, we can replay it many times to test different ways of processing that same data. In ROS parlance, these recordings are called “bags”.
+
+A crucial point for both of these features is that the change is seamless. Because the real robot, the simulator, and the bag playback mechanism can all provide identical (or at least very similar) interfaces, your software does not need to be modiﬁed to operate in these distinct scenarios, and indeed need not even “know” whether it is talking to a real robot or to something else.
+
+What this means for the WRAI team is that the majority of your initial development will probably be using using pre-recorded data.
+Once your code is working with the pre-recorded data you will move on to testing it in simulation.
+Finally, once you are happy with how it works in simulation, you will test it on the midi-scale vehicle.
+Once it is working on the midi-scale vehicle, you may test it on the full-scale vehicle.
+At every stage, your code will be running in the same way, it will just be using different data sources.
+
+
+## Conclusion
+
+While other platforms provide similar capabilities, ROS stands out due to its broad adoption and strong community support. This widespread backing gives ROS a “critical mass,” making it likely to continue evolving and improving as the robotics field advances.
+
+It’s also important to clarify some common misconceptions about ROS:
+
+- **ROS is not a programming language.**  
+  You can develop ROS programs in several languages, including C++, Python, and Java.
+
+- **ROS is more than just a library.**  
+  In addition to libraries, ROS provides command-line and graphical tools, a build system, and a large ecosystem of packages and resources.
+
+
+
+# WRAI simulator
+
+These training materials are intended to get new members of the WRAI team up and running with the WRAI simulator.
+
+This will allow you to start developing code for the vehicle without having to wait for the real vehicle to be available.
+
+## Requirements
+
+As per the hardware on the real vehicle you will need a linux system to run ROS2 and the rest of the WRAI software stack.
+There are a number of different ways to achieve this, and the best option for you will depend on your personal preferences and the hardware that you have available.
+
+Whatever you chose the WRAI team recommends using [Ubuntu 22.04 LTS (Jammy Jellyfish)](https://releases.ubuntu.com/jammy/) as the base operating system as that is the version that the team uses on the real vehicle.
+
+The various options are listed in no particular order below.
+
+- **Native Ubuntu installation.**  
+  The simplest option is to install Ubuntu 22.04 LTS on your computer as the main operating system. This will give you the best performance and compatibility with the WRAI software stack. However, it may not be practical is you need to use other operating systems (e.g. Windows) for other tasks.
+- **Dual booting.**
+  If you need to use other operating systems, you may be able to set up a dual boot system with Ubuntu 22.04 LTS and your other operating system. This will allow you to choose which operating system to boot into when you start your computer.
+  However this does come with some risks, if you are not careful you can end up deleting your other operating system or data.
+- **Virtual machine.**
+  You can run Ubuntu in a virtual machine on your computer. 
+  This will allow you to run Ubuntu alongside your other operating system, but it may not give you the best performance.
+  We recommend using [VirtualBox](https://www.virtualbox.org/) for this but [VMware](https://www.vmware.com/) is also a good option.
+  This approach does not work well with M1 Mac computers as they do not support virtualisation of x86_64 operating systems.
+- **Windows Subsystem for Linux (WSL).**
+  If you are using Windows 10 or later, you can use the Windows Subsystem for Linux (WSL) to run Ubuntu 22.04 LTS on your computer. 
+  This will provide good performance but it is proven less reliable than the other options.
+- **Docker image.**
+  If you are familiar with Docker, you can use a Docker image to run Ubuntu 22.04 LTS on your computer. 
+  This will allow you to run Ubuntu in a container, which is isolated from your host operating system.
+  In particular, if you have a lower spec machine or you are an M1 Mac user, you can use Github codespaces to run a Docker image in the cloud. 
+  Instructions for running a local docker image or using codespaces are available in the [WRAI Docker repository](https://github.com/Warwick-Racing/wrai-ros2-docker).
+
+
+Whatever approach you choose, you will need to install ROS2 Humble and Webots 2025a on your system.
+ROS2 instructions are on the [ROS2 website](https://docs.ros.org/en/humble/Installation.html). 
+Webots is available from the [Webots website](https://github.com/cyberbotics/webots/releases/tag/R2025a).
+The only exception is if you are using the WRAI Docker image, in which case ROS2 Humble and Webots are already installed for you.
+
+
 ## ROS workspace structure
 
 A ROS2 workspace is simple a directory containing the resources needed to run a project.
@@ -75,7 +191,7 @@ These are kept in their own package because multiple packages need to know the m
 An example of a ROS package handling a specific piece of functionality. 
 In this case the package performs odometry calculations based on wheel rotations.
 
-Importantly, this was a originally a pre-existing node produced by the ROS community. We were able to take an modify the node to meet our specific needs rather than having to create everyting from scratch.
+Importantly, this was a originally a pre-existing node produced by the ROS community. We were able to take an modify the node to meet our specific needs rather than having to create everything from scratch.
 
 **webots\_fsai**
 
@@ -123,7 +239,6 @@ Using the terminal.
 {{2}} 
 > If you have not done so yet, install other dependencies for ROS Humble.
 > 
-> - `sudo apt-get install ros-humble-ackermann-msgs`
 > - `sudo apt-get install ros-humble-webots-ros2-driver`
 > - `sudo apt-get install ros-humble-tf-transformations`
 
@@ -186,7 +301,7 @@ From the terminal in the workspace directory.
 
 If everything is successful the webots simulator should launch and the simulated vehicle should start moving.
 
-The vehicle is going to swerve off the track almost instantly but that's all we are telling the vehicle is do it go forwards while steering left. The point is that the vehicle has moved.
+The vehicle is going to swerve off the track almost instantly but that's as we are telling the vehicle is do it go forwards while steering left. The point is that the vehicle has moved.
 
 {{2}} 
 > Press Ctrl+C to stop the simulation.
